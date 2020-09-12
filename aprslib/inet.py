@@ -358,7 +358,8 @@ if __name__ == "__main__":
 
     def consume(pack):
         sys.stdout.buffer.write(pack)
-        print()
+        sys.stdout.buffer.write(b'\n')
+
     aprs = IS(args.callsign, passwd=args.passcode)
     aprs.connect()
     aprs.consumer(consume, raw=True, immortal=True)
