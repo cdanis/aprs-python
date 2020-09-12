@@ -237,6 +237,7 @@ class IS(object):
             self.sock.settimeout(5)
 
             self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
+            self.sock.setsockopt(socket.SOL_TCP, socket.TCP_NODELAY, 1)
 
             banner = self.sock.recv(512)
             if is_py3:
