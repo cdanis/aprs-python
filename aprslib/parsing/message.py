@@ -73,7 +73,7 @@ def parse_message(body):
             logger.debug("Packet is just a regular message")
             parsed.update({'format': 'message'})
 
-            match = re.search(r"^(ack|rej)([A-Za-z0-9]{1,5})$", body)
+            match = re.search(r"^(ack|rej)(.{1,5})$", body)
             if match:
                 parsed.update({
                     'response': match.group(1),
@@ -82,7 +82,7 @@ def parse_message(body):
             else:
                 body = body[0:70]
 
-                match = re.search(r"{([A-Za-z0-9]{1,5})$", body)
+                match = re.search(r"{(.{1,5})$", body)
                 if match:
                     msgNo = match.group(1)
                     body = body[:len(body) - 1 - len(msgNo)]
