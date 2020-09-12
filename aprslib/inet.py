@@ -345,3 +345,19 @@ class IS(object):
                 line, self.buf = self.buf.split(newline, 1)
 
                 yield line
+
+
+if __name__ == "__main__":
+    import argparse
+    import sys
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-c', '--callsign', required=True)
+    parser.add_argument('-p', '--passcode', default='-1')
+    args = parser.parse_args()
+
+    def consume(pack):
+        sys.stdout.buffer.write(pack)
+        print()
+    aprs = IS(args.callsign, passwd=args.passcode)
+    aprs.connect()
+    aprs.consumer(consume, raw=True)
