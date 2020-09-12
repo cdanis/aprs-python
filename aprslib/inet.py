@@ -360,5 +360,5 @@ if __name__ == "__main__":
         sys.stdout.buffer.write(pack)
         print()
     aprs = IS(args.callsign, passwd=args.passcode)
-    aprs.connect(immortal=True)
-    aprs.consumer(consume, raw=True)
+    aprs.connect()
+    aprs.consumer(consume, raw=True, immortal=True)
