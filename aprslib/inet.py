@@ -237,6 +237,11 @@ class IS(object):
             self.sock.settimeout(5)
 
             self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
+            # TODO: this is Linux-only so we need to condition on platform / on availability of these options
+            # 10 seconds was chosen because it is half the usual aprsc banner heartbeat interval.
+            self.sock.setsockopt(socket.SOL_TCP, socket.TCP_KEEPIDLE, 10)  # send first keepalive after 10sec idle
+            self.sock.setsockopt(socket.SOL_TCP, socket.TCP_KEEPINTVL, 5)  # send subsequent keepalives after 5sec
+            self.sock.setsockopt(socket.SOL_TCP, socket.TCP_KEEPCNT, 3)    # after 3 unacked keepalives, time out
             self.sock.setsockopt(socket.SOL_TCP, socket.TCP_NODELAY, 1)
 
             banner = self.sock.recv(512)
