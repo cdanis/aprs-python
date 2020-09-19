@@ -50,7 +50,10 @@ class IS(object):
     Note: sending of packets is not supported yet
 
     """
-    def __init__(self, callsign, passwd="-1", host="rotate.aprs.net", port=10152, skip_login=False):
+    DEFAULT_HOST = "rotate.aprs.net"
+    DEFAULT_PORT = 10152
+
+    def __init__(self, callsign, passwd="-1", host=DEFAULT_HOST, port=DEFAULT_PORT, skip_login=False):
         """
         callsign        - used when login in
         passwd          - for verification, or "-1" if only listening
@@ -359,12 +362,31 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('-c', '--callsign', required=True)
     parser.add_argument('-p', '--passcode', default='-1')
+    parser.add_argument('--host', default=IS.DEFAULT_HOST)
+    parser.add_argument('--port', default=IS.DEFAULT_PORT)
+    parser.add_argument('--filter', default=None)
+    parser.add_argument('-v', '--verbose', action='count', default=0,
+                        help='Verbosity (-v, -vv, etc).')
+
     args = parser.parse_args()
+
+    loglevel = logging.WARNING
+    if args.verbose >= 1:
+        loglevel = logging.INFO
+    if args.verbose >= 2:
+        loglevel = logging.DEBUG
+    if args.verbose >= 3:
+        logging.getLogger('aprslib.parsing').setLevel(loglevel)
+    logging.getLogger('aprslib.inet.IS').setLevel(loglevel)
+
+    logging.basicConfig(level=loglevel)
 
     def consume(pack):
         sys.stdout.buffer.write(pack)
         sys.stdout.buffer.write(b'\n')
 
-    aprs = IS(args.callsign, passwd=args.passcode)
+    aprs = IS(args.callsign, passwd=args.passcode, host=args.host, port=args.port)
+    if args.filter:
+        aprs.set_filter(args.filter)
     aprs.connect()
     aprs.consumer(consume, raw=True, immortal=True)
